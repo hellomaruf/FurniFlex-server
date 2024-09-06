@@ -22,6 +22,20 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+    const usersCollection = client.db("FurniFlex").collection("users");
+
+    app.post("/user", async (req, res) => {
+      const userInfo = req.body;
+      console.log(userInfo);
+      const query = { email: userInfo?.email };
+      const existingUser = await usersCollection.findOne(query);
+      if (existingUser) {
+        return res.send({ message: "User is already Exist", insertedId: null });
+      }
+      const result = await usersCollection.insertOne(userInfo);
+      res.send(result);
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
