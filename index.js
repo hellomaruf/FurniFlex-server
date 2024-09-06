@@ -24,6 +24,7 @@ async function run() {
   try {
     const usersCollection = client.db("FurniFlex").collection("users");
 
+    // Added user in database -------------------->
     app.post("/user", async (req, res) => {
       const userInfo = req.body;
       console.log(userInfo);
@@ -34,6 +35,15 @@ async function run() {
       }
       const result = await usersCollection.insertOne(userInfo);
       res.send(result);
+    });
+
+    app.post("/isUserSignUp", async (req, res) => {
+      const loginInfo = req.body;
+      const query = { email: loginInfo?.email };
+      const isSignUp = await usersCollection.findOne(query);
+      if (isSignUp) {
+        return res.send({ message: "User has signed up", insertedId: null });
+      }
     });
 
     await client.db("admin").command({ ping: 1 });
